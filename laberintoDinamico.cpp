@@ -3,6 +3,8 @@
 #include <vector>
 using namespace std;
 
+// Tendría que ser con backtracking para poder encontrar todas las soluciones optima.
+
 int matriz[5][5] = {{1, 1, 1, 1, 1},
                   {1, 1, 0, 0, 1},
                   {1, 1, 1, 1, 1},
