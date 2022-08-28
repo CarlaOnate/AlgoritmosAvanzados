@@ -25,7 +25,6 @@ void printArray(vector<char> lista) {
   cout << "\n";
 }
 
-
 //Sacado de internet - no entiendo como esto sirve
 void combinaciones_nmms (vector<char> lista, vector<char> subset, char comparar, int comparaciones, int size) {
   if (comparaciones >= size) { // termino con ese subset
@@ -44,6 +43,7 @@ void combinaciones_nmms (vector<char> lista, vector<char> subset, char comparar,
 }
 
 void getCombination (vector<char> letras, vector<vector<char> > combinaciones, int pivote) { // O(N)
+  // https://web.stanford.edu/class/archive/cs/cs106b/cs106b.1126/lectures/07/Slides07.pdf
   // IMPORTANT: Combinations are different from permutation because the order is not important but the uniqueness of each combination within the whole.
   // A B C D
   // B C D
@@ -54,7 +54,7 @@ void getCombination (vector<char> letras, vector<vector<char> > combinaciones, i
   // termina recursion
   if (pivote == letras.size()) {
     printArray(combinaciones);
-    return; // Combinatino already has all the values
+    return; // Combinations  already has all the values
   }
 
   int combSize = combinaciones.size(); // Store size to prevent extra cycles after new combinations are added
