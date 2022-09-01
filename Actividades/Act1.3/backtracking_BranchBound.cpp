@@ -79,7 +79,7 @@ void backtrackingBranchAndBound (std::vector<std::tuple<int, int> > camino, std:
 
   // Encontrar solucion
   if (isPositionValid(board, caminoMatrix, currentRow, currentColumn)) {
-    if (currentSteps < bestSolution.size()) {
+    if (currentSteps < bestSolution.size() || bestSolution.empty()) {
       // Solo recorre si esta opcion es mejor que la mejor opcion actual
       std::tuple<int, int> nextRightPos = std::make_tuple(currentRow, currentColumn + 1);
       std::tuple<int, int> nextBottomPos = std::make_tuple(currentRow + 1, currentColumn);
@@ -166,6 +166,7 @@ int main () {
   if (solutions.empty()) {
     std::cout << "\t No se encontró solución con Branch and bound \n";
   }
+  printSolutionList(bestSolution);
 
   return 0;
 }
