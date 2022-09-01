@@ -4,11 +4,11 @@
 #include <vector>
 #include <tuple>
 
-std::vector<std::tuple<int, int> > bestSolution;
-std::vector<std::vector<std::tuple<int, int> > > solutions;
+std::vector<std::tuple<int, int> > bestSolution2;
+std::vector<std::vector<std::tuple<int, int> > > solutions2;
 
 // Function to print intial board
-void printBoard (std::vector<std::vector<int> > board) {
+void printBoard2 (std::vector<std::vector<int> > board) {
   for (auto row : board) {
     for (auto col : row) {
       std::cout << " " << col << " ";
@@ -19,7 +19,7 @@ void printBoard (std::vector<std::vector<int> > board) {
 }
 
 // Function used for debbugging - leaving it there if needed
-void printBoard (std::vector<std::vector<int> > board, std::tuple<int, int> position) {
+void printBoard2 (std::vector<std::vector<int> > board, std::tuple<int, int> position) {
   int currentRow = get<0>(position), currentColumn = get<1>(position);
   // Add current position in board
   int prevValue = board[currentRow][currentColumn];
@@ -35,8 +35,8 @@ void printBoard (std::vector<std::vector<int> > board, std::tuple<int, int> posi
   board[currentRow][currentColumn] = prevValue;
 }
 
-// Print the solutions found - for backtracking
-void printSolutionList (std::vector<std::tuple<int, int> > camino) {
+// Print the solutions2 found - for backtracking
+void printSolutionList2 (std::vector<std::tuple<int, int> > camino) {
   std::cout << "Camino : \n";
   for (auto pos : camino) {
     // print as column x row
@@ -44,10 +44,10 @@ void printSolutionList (std::vector<std::tuple<int, int> > camino) {
   }
 }
 
-// Print all the solutions found - for branchBound
-void printSolutionList () {
-  std::cout << "Solutions : \n";
-  for (auto solution : solutions) {
+// Print all the solutions2 found - for branchBound
+void printSolutionList2 () {
+  std::cout << "solutions2 : \n";
+  for (auto solution : solutions2) {
     for (auto pos : solution) {
       // print as column x row
       std::cout << "(" << get<0>(pos) << ", " << get<1>(pos) << ")  ";
@@ -56,7 +56,7 @@ void printSolutionList () {
   }
 }
 
-bool isPositionValid (std::vector<std::vector<int> > board, std::vector<std::vector<int> > caminoMatrix, int row, int column) {
+bool isPositionValid2 (std::vector<std::vector<int> > board, std::vector<std::vector<int> > caminoMatrix, int row, int column) {
   if ((row < board.size() && column < board[0].size()) && (row >= 0 && column >= 0)) { //Within bounds of board and value of pos is valid
     return caminoMatrix[row][column] != 5 && board[row][column] == 1; // If haven't been there and value is 1
   }
@@ -69,18 +69,18 @@ bool backtrack (std::vector<std::tuple<int, int> > camino, std::vector<std::vect
     //Funcion objetivo
     if (currentRow == board.size() - 1 && currentColumn == board[0].size() - 1) {
       camino.push_back(position);
-      printSolutionList(camino);
+      printSolutionList2(camino);
       return true; // Termina de buscar mas soluciones e imprime la primera que encontró
     }
 
     // Siguiente paso
-    if (isPositionValid(board, caminoMatrix, currentRow, currentColumn)) {
+    if (isPositionValid2(board, caminoMatrix, currentRow, currentColumn)) {
       std::tuple<int, int> nextRightPos = std::make_tuple(currentRow, currentColumn + 1);
       std::tuple<int, int> nextBottomPos = std::make_tuple(currentRow + 1, currentColumn);
       std::tuple<int, int> nextLeftPos = std::make_tuple(currentRow, currentColumn - 1);
       std::tuple<int, int> nextUpPos = std::make_tuple(currentRow - 1, currentColumn);
       camino.push_back(position);
-      caminoMatrix[currentRow][currentColumn] = 5; // Agregar en matriz donde pasaste para validacion isPositionValid
+      caminoMatrix[currentRow][currentColumn] = 5; // Agregar en matriz donde pasaste para validacion isPositionValid2
       // Recorrer todas las opciones hasta encontrar alguna que regrese verdadero
       if (backtrack(camino, board, nextRightPos, caminoMatrix)) return true;
       if (backtrack(camino, board, nextBottomPos, caminoMatrix)) return true;
@@ -101,15 +101,15 @@ void branchBound (std::vector<std::tuple<int, int> > camino, std::vector<std::ve
   // Revisa si llego a una solucion parcial (una de muchas soluciones posibles)
   if (currentRow == board.size() - 1 && currentColumn == board[0].size() - 1) { // función objetivo - determina si ya llego al punto deseado del tablero
     camino.push_back(position); // Registra ultima posicion en solucion
-    solutions.push_back(camino); // Guarda solucion en lista de soluciones
-    if (camino.size() <= bestSolution.size() || bestSolution.empty()) {
-      bestSolution.swap(camino); // Solucion es igual a mejor reemplaza la solucion mejor anterior
+    solutions2.push_back(camino); // Guarda solucion en lista de soluciones
+    if (camino.size() <= bestSolution2.size() || bestSolution2.empty()) {
+      bestSolution2.swap(camino); // Solucion es igual a mejor reemplaza la solucion mejor anterior
     }
     return; // Termina este ciclo
   }
 
   // Encontrar solucion
-  if (isPositionValid(board, caminoMatrix, currentRow, currentColumn)){
+  if (isPositionValid2(board, caminoMatrix, currentRow, currentColumn)){
     std::tuple<int, int> nextRightPos = std::make_tuple(currentRow, currentColumn + 1);
     std::tuple<int, int> nextBottomPos = std::make_tuple(currentRow + 1, currentColumn);
     std::tuple<int, int> nextLeftPos = std::make_tuple(currentRow, currentColumn - 1);
@@ -133,21 +133,21 @@ void branchBound (std::vector<std::tuple<int, int> > camino, std::vector<std::ve
  * USAR EL MISMO QUE REVISA VARIAS SOLUCIONES PERO SI LOS PASOS ACTUALES QUE ESTAS TOMANDO SON MAYORES A LA OPCION OPTIMA SO FAR ENTONCES NO SIGAS ESE CAMINO
  *
  */
-void poda (std::vector<std::tuple<int, int> > camino, std::vector<std::vector<int> > board, std::tuple<int, int> position, std::vector<std::vector<int> > caminoMatrix, int currentSteps) {
+void backtrackPoda (std::vector<std::tuple<int, int> > camino, std::vector<std::vector<int> > board, std::tuple<int, int> position, std::vector<std::vector<int> > caminoMatrix, int currentSteps) {
   int currentRow = get<0>(position), currentColumn = get<1>(position);
   // Revisa si llego a una solucion parcial (una de muchas soluciones posibles)
   if (currentRow == board.size() - 1 && currentColumn == board[0].size() - 1) { // función objetivo - determina si ya llego al punto deseado del tablero
     camino.push_back(position); // Registra ultima posicion en solucion
-    solutions.push_back(camino); // Guarda solucion en lista de soluciones
-    if (camino.size() <= bestSolution.size() || bestSolution.empty()) {
-      bestSolution.swap(camino); // Solucion es igual a mejor reemplaza la solucion mejor anterior
+    solutions2.push_back(camino); // Guarda solucion en lista de soluciones
+    if (camino.size() <= bestSolution2.size() || bestSolution2.empty()) {
+      bestSolution2.swap(camino); // Solucion es igual a mejor reemplaza la solucion mejor anterior
     }
     return; // Termina este ciclo
   }
 
   // Encontrar solucion
-  if (isPositionValid(board, caminoMatrix, currentRow, currentColumn)) {
-    if (currentSteps < bestSolution.size()) {
+  if (isPositionValid2(board, caminoMatrix, currentRow, currentColumn)) {
+    if (currentSteps < bestSolution2.size()) {
       // Solo recorre si esta opcion es mejor que la mejor opcion actual
       std::tuple<int, int> nextRightPos = std::make_tuple(currentRow, currentColumn + 1);
       std::tuple<int, int> nextBottomPos = std::make_tuple(currentRow + 1, currentColumn);
@@ -156,10 +156,10 @@ void poda (std::vector<std::tuple<int, int> > camino, std::vector<std::vector<in
       camino.push_back(position); // Agrega posicion a solucion
       caminoMatrix[currentRow][currentColumn] = 5; // Cambia valor de donde ya pasaste para validacion futura
       // Probar todos caminos en pos actual
-      poda(camino, board, nextRightPos, caminoMatrix, currentSteps);
-      poda(camino, board, nextBottomPos, caminoMatrix, currentSteps);
-      poda(camino, board, nextUpPos, caminoMatrix, currentSteps);
-      poda(camino, board, nextLeftPos, caminoMatrix, currentSteps);
+      backtrackPoda(camino, board, nextRightPos, caminoMatrix, currentSteps);
+      backtrackPoda(camino, board, nextBottomPos, caminoMatrix, currentSteps);
+      backtrackPoda(camino, board, nextUpPos, caminoMatrix, currentSteps);
+      backtrackPoda(camino, board, nextLeftPos, caminoMatrix, currentSteps);
       // No se encontro solucion
       camino.pop_back(); // Se hace poda -> elimina candidato que no funciona
       caminoMatrix[currentRow][currentColumn] = 0;
@@ -167,37 +167,37 @@ void poda (std::vector<std::tuple<int, int> > camino, std::vector<std::vector<in
   }
 }
 
-int main () {
+int main2 () {
   //Tablero de 4x4
   std::vector<std::tuple<int, int> > camino;
   std::vector<std::vector<int>> caminoMatrix = {{0, 0, 0, 0, 0}, {0, 0, 0, 0, 0}, {0, 0, 0, 0, 0}, {0, 0, 0, 0, 0}, {0, 0, 0, 0, 0}};
-  std::vector<std::vector<int>> board;
-  std::vector<int> row;
-  row.push_back(1);row.push_back(1);row.push_back(1);row.push_back(1); row.push_back(1);
-  board.push_back(row);
-  row.clear();
-  row.push_back(0);row.push_back(0);row.push_back(0);row.push_back(1); row.push_back(1);
-  board.push_back(row);
-  row.clear();
-  row.push_back(1);row.push_back(1);row.push_back(1);row.push_back(1); row.push_back(0);
-  board.push_back(row);
-  row.clear();
-  row.push_back(0);row.push_back(1);row.push_back(0);row.push_back(0); row.push_back(1);
-  board.push_back(row);
-  row.clear();
-  row.push_back(0);row.push_back(1);row.push_back(1);row.push_back(1); row.push_back(1);
-  board.push_back(row);
-  row.clear();
+  std::vector<std::vector<int>> tablero;
+  std::vector<int> fila;
+  fila.push_back(1);fila.push_back(1);fila.push_back(1);fila.push_back(1); fila.push_back(1);
+  tablero.push_back(fila);
+  fila.clear();
+  fila.push_back(0);fila.push_back(0);fila.push_back(0);fila.push_back(1); fila.push_back(1);
+  tablero.push_back(fila);
+  fila.clear();
+  fila.push_back(1);fila.push_back(1);fila.push_back(1);fila.push_back(1); fila.push_back(0);
+  tablero.push_back(fila);
+  fila.clear();
+  fila.push_back(0);fila.push_back(1);fila.push_back(0);fila.push_back(0); fila.push_back(1);
+  tablero.push_back(fila);
+  fila.clear();
+  fila.push_back(0);fila.push_back(1);fila.push_back(1);fila.push_back(1); fila.push_back(1);
+  tablero.push_back(fila);
+  fila.clear();
 
   //TODO: Missing validation
     // - Starting point must be a 1 and end point must be 1
     // - Data given must be numbers
 
-  std::cout << "Initial Board \n";
-  printBoard(board);
+  std::cout << "Initial tablero \n";
+  printBoard2(tablero);
   std::tuple<int, int> initialPos = std::make_tuple(0, 0);
 
-  if(backtrack(camino, board, initialPos, caminoMatrix)){
+  if(backtrack(camino, tablero, initialPos, caminoMatrix)){
     std::cout << "SOLUCION\n\n\n";
   } else {
     std::cout << "NO  SOLUCION\n\n\n";
@@ -206,12 +206,12 @@ int main () {
   //Branch and bound
 
   std::vector<std::tuple<int, int>> mejorSolucion;
-  // branchBound(camino, board, initialPos, caminoMatrix);
-  poda(camino, board, initialPos, caminoMatrix, 0);
-  /* if (!solutions.empty()) {
-    printSolutionList();
+  // branchBound(camino, tablero, initialPos, caminoMatrix);
+  backtrackPoda(camino, tablero, initialPos, caminoMatrix, 0);
+  /* if (!solutions2.empty()) {
+    printSolutionList2();
     std::cout << "\t Mejo solucion => \n";
-    printSolutionList(bestSolution);
+    printSolutionList2(bestSolution2);
   } else {
     std::cout << "\t NO SE ENCONTRO SOLUCION \n";
   } */
