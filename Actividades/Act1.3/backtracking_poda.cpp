@@ -7,6 +7,12 @@
 std::vector<std::tuple<int, int> > bestSolution2;
 std::vector<std::vector<std::tuple<int, int> > > solutions2;
 
+/*
+ * RESUMEN QUE YA ME CONFINDÍ
+ * Backtracking: Tiene que regresar todas las posibles soluciones al probelma
+ * Branch and bound: Tiene que regresar la solucion mas optima, pero ignorando caminos que sabes que no dan la respuesta mas optima.
+ */
+
 // Function to print intial board
 void printBoard2 (std::vector<std::vector<int> > board) {
   for (auto row : board) {
@@ -127,6 +133,39 @@ void branchBound (std::vector<std::tuple<int, int> > camino, std::vector<std::ve
   }
   // If nothing valid then do nothing
 }
+
+// todo: Tal vez esto no es backtracking y es otra cosa rara
+bool noSoyBacktracking (std::vector<std::tuple<int, int> > camino, std::vector<std::vector<int> > board, std::tuple<int, int> position, std::vector<std::vector<int> > caminoMatrix) {
+  int currentRow = get<0>(position), currentColumn = get<1>(position);
+  std::tuple<int, int> tempPosition = std::make_tuple(currentRow, currentColumn);
+  //Funcion objetivo
+  if (currentRow == board.size() - 1 && currentColumn == board[0].size() - 1) {
+    camino.push_back(position);
+    printSolutionList2(camino);
+    return true; // Termina de buscar mas soluciones e imprime la primera que encontró
+  }
+
+  // Siguiente paso
+  if (isPositionValid2(board, caminoMatrix, currentRow, currentColumn)) {
+    std::tuple<int, int> nextRightPos = std::make_tuple(currentRow, currentColumn + 1);
+    std::tuple<int, int> nextBottomPos = std::make_tuple(currentRow + 1, currentColumn);
+    std::tuple<int, int> nextLeftPos = std::make_tuple(currentRow, currentColumn - 1);
+    std::tuple<int, int> nextUpPos = std::make_tuple(currentRow - 1, currentColumn);
+    camino.push_back(position);
+    caminoMatrix[currentRow][currentColumn] = 5; // Agregar en matriz donde pasaste para validacion isPositionValid
+    // Recorrer todas las opciones hasta encontrar alguna que regrese verdadero
+    if (noSoyBacktracking(camino, board, nextRightPos, caminoMatrix)) return true;
+    if (noSoyBacktracking(camino, board, nextBottomPos, caminoMatrix)) return true;
+    if (noSoyBacktracking(camino, board, nextLeftPos, caminoMatrix)) return true;
+    if (noSoyBacktracking(camino, board, nextUpPos, caminoMatrix)) return true;
+    // No se encontraron opciones
+    camino.pop_back(); // Quitar el valor que se agrego al camino
+    caminoMatrix[currentRow][currentColumn] = 0; // Regresar el valor de la matriz a default
+    return false;
+  }
+
+  return false;
+};
 
 /*
  * podaaaaa
