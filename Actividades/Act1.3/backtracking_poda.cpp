@@ -24,6 +24,16 @@ void printBoard2 (std::vector<std::vector<int> > board) {
   std::cout << "\n";
 }
 
+
+std::vector<int> getSurroundings (std::vector<std::vector<int> > board, std::vector<std::vector<int> > caminoMatrix, int row, int column) {
+  std::vector<int> surroundings;
+  //Right , down, left, up
+  surroundings.push_back(isPositionValid(board, caminoMatrix, row, column + 1) ? 1 : 0);
+  surroundings.push_back(isPositionValid(board, caminoMatrix, row + 1, column) ? 1 : 0);
+  surroundings.push_back(isPositionValid(board, caminoMatrix, row, column - 1) ? 1 : 0);
+  surroundings.push_back(isPositionValid(board, caminoMatrix, row - 1, column) ? 1 : 0);
+}
+
 // Function used for debbugging - leaving it there if needed
 void printBoard2 (std::vector<std::vector<int> > board, std::tuple<int, int> position) {
   int currentRow = get<0>(position), currentColumn = get<1>(position);
@@ -67,6 +77,67 @@ bool isPositionValid2 (std::vector<std::vector<int> > board, std::vector<std::ve
     return caminoMatrix[row][column] != 5 && board[row][column] == 1; // If haven't been there and value is 1
   }
   return false;
+}
+
+// UNA MADRE QUE NO ME SIRVIO
+void backtrackPoda2 (std::vector<std::tuple<int, int> > camino, std::vector<std::vector<int> > board, std::tuple<int, int> position, std::vector<std::vector<int> > caminoMatrix, std::tuple<int, int> savedPos) {
+  int currentRow = get<0>(position), currentColumn = get<1>(position);
+  std::tuple<int, int> tempPosition = std::make_tuple(currentRow, currentColumn);
+
+  //Funcion objetivo
+  if (currentRow == board.size() - 1 && currentColumn == board[0].size() - 1) {
+    camino.push_back(position);
+    solutions.push_back(camino);
+    return;
+  }
+
+  printBoard(caminoMatrix);
+
+  std::vector<int> surroundings = getSurroundings(board, caminoMatrix, currentRow, currentColumn);
+  if (isPositionValid(board, caminoMatrix, currentRow, currentColumn)) {
+    int right = surroundings[0], bottom = surroundings[1], left = surroundings[2], up = surroundings[3];
+    if (right + bottom + left + up) { //There are two paths
+      std::tuple<int, int> savePosition = std::make_tuple(currentRow, currentColumn);
+      std::tuple<int, int> nextRightPos = std::make_tuple(currentRow, currentColumn + 1);
+      std::tuple<int, int> nextBottomPos = std::make_tuple(currentRow + 1, currentColumn);
+      std::tuple<int, int> nextLeftPos = std::make_tuple(currentRow, currentColumn - 1);
+      std::tuple<int, int> nextUpPos = std::make_tuple(currentRow - 1, currentColumn);
+
+      caminoMatrix[currentRow][currentColumn] = 5;
+      backtrackPoda2(camino, board, nextRightPos, caminoMatrix, savePosition);
+      backtrackPoda2(camino, board, nextBottomPos, caminoMatrix, savePosition);
+      backtrackPoda2(camino, board, nextLeftPos, caminoMatrix, savePosition);
+      backtrackPoda2(camino, board, nextUpPos, caminoMatrix, savePosition);
+      // if none work go back to saved position
+      backtrackPoda2(camino, board, position, caminoMatrix, savePosition);
+    }
+
+    // only one path - follow that
+    if (right) {
+      std::tuple<int, int> nextRightPos = std::make_tuple(currentRow, currentColumn + 1);
+      caminoMatrix[currentRow][currentColumn] = 5;
+      backtrackPoda2(camino, board, nextRightPos, caminoMatrix, position);
+    }
+
+    if (bottom) {
+      std::tuple<int, int> nextBottomPos = std::make_tuple(currentRow + 1, currentColumn);
+      caminoMatrix[currentRow][currentColumn] = 5;
+      backtrackPoda2(camino, board, nextBottomPos, caminoMatrix, position);
+    }
+
+    if (left) {
+      std::tuple<int, int> nextLeftPos = std::make_tuple(currentRow, currentColumn - 1);
+      caminoMatrix[currentRow][currentColumn] = 5;
+      backtrackPoda2(camino, board, nextLeftPos, caminoMatrix, position);
+    }
+
+    if (up) {
+      std::tuple<int, int> nextUpPos = std::make_tuple(currentRow - 1, currentColumn);
+      caminoMatrix[currentRow][currentColumn] = 5;
+      backtrackPoda2(camino, board, nextUpPos, caminoMatrix, position);
+    }
+    return;
+  }
 }
 
 bool backtrack (std::vector<std::tuple<int, int> > camino, std::vector<std::vector<int> > board, std::tuple<int, int> position, std::vector<std::vector<int> > caminoMatrix) {
