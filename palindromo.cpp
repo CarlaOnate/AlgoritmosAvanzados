@@ -3,6 +3,7 @@
 //
 
 #include <iostream>
+#include <algorithm>
 #include <string>
 #include <vector>
 using namespace std;
@@ -16,15 +17,25 @@ using namespace std;
 //    el contador es igual a i
 //    el R va a ser i mas P[i]
 
-//void makeStringOdd (string &text) {
-//  for (int i = 0; i < text.length(); i++) {
-//
-//  }
-//}
+string makeStringOdd (string &text) {
+  string result;
+  result.push_back('#');
+  for (char i : text) {
+    result.push_back(i);
+    result.push_back('#');
+  }
+  return result;
+}
 
-void printPalindrome(string text, int start, int end) {
-  for (int i = start; i < end; i++) {
-    cout << text[i];
+void printPalindrome(string text, int length, int center) {
+  int start = center - (length - 2);
+  cout << "\n";
+  for(int i = start; i <= start + (length - 1)*2; i++) {
+    if (text[i] == '#') {
+      cout << " ";
+    } else {
+      cout << text[i];
+    }
   }
   cout << "\n";
 }
@@ -37,39 +48,45 @@ void printP(vector<int> P) {
 }
 
 void manacher (string text) {
-  int sizeArray = 2 * text.length() + 1;
+  int sizeArray = text.length();
+  string oddText = makeStringOdd(text);;
+  /*if (text.length() % 2 == 0) {
+    sizeArray = 2 * text.length() + 1;
+    oddText = makeStringOdd(text);
+  } */
   int palindromeLength = 0;
+  int palindromeCenter = 0;
   int centro = 0;
-  int L = 0;
   int R = 0;
   vector<int> P (sizeArray);
 
-  //Prueba con palidnormos impares ABBCBBA
-
+  cout << "ODD TEXT => " << oddText << "\n";
+  // #a#b#b#a#
   // Un ciclo es centro
-  for (int i = 0; i < text.length() - 1; i++) {
-
-    if (i < R) {
-      P[i] = min(R - i, P[2 * centro - i]);
+  for (int i = 0; i < oddText.length() - 1; i++) {
+    if (i < R) { // Centro actual esta dentro del rango del palindromo mas grande encontrado anteriormente
+      P[i] = min((R - i), (centro*2 - i));
     }
 
-    while (text[i - P[i] - 1] == text[i + P[i] + 1]) { // extienden left y right bounds
+    while (oddText[i - (P[i] - 1)] == oddText[i + (P[i] + 1)]) { // extienden left y right bounds
       P[i]++;
+    }
 
-      if (i + P[i] > R){
-        centro = i;
-        R = i + P[i];
-      }
+    if (i + P[i] > R) { // Optimizar para recorrer menos pasos - creo
+      centro = i;
+      R = i + P[i]; // Avanza R a nueva posición encontrada en ciclo anterior
+    }
 
-      if (P[i] > palindromeLength) { // sustituir nueva palidromo mas largo
-        L = (i - P[i] - 1) / 2;
-        palindromeLength = P[i];
-      }
+    if (P[i] > palindromeLength) { // sustituir nueva palidromo mas largo
+      palindromeCenter = i;
+      palindromeLength = P[i];
     }
   }
 
+  cout << "palindrome Length =>" << palindromeLength <<"\n";
+  cout << "palindrome Center =>" << palindromeCenter <<"\n";
   printP(P);
-  printPalindrome(text, L, L + R - 1);
+  printPalindrome(oddText, palindromeLength, palindromeCenter);
 }
 
 void copiaInternet (string text) {
@@ -137,8 +154,7 @@ void copiaInternet (string text) {
   printf("\n");
 }
 
-
 int main () {
-  manacher("ACDBDCK");
-  copiaInternet("daabddfddbegtd");
+  manacher("jabbajkjhgf");
+  copiaInternet("jabbajkjhgf");
 }
