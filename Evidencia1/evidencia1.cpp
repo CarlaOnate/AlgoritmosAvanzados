@@ -8,6 +8,7 @@
 #include <vector>
 #include <tuple>
 
+// To show functioning of Z algorithm
 void printZarr(std::vector<int> z) {
   for (auto el : z) {
     std::cout << " " << el << " ";
@@ -43,7 +44,7 @@ bool zAlgoMultiplePatterns(std::vector<std::string> patterns, std::string text) 
         P++; // Move pattern
       }
       // No match
-      if (C == el.size()) {
+      if (C == el.size()) { // Exact match with current pattern
         matchFound++;
         matchIndex = L;
         patternFound = el;
@@ -51,7 +52,6 @@ bool zAlgoMultiplePatterns(std::vector<std::string> patterns, std::string text) 
       }
       C = 0; P = 0; R = L; // Reset values but dont move left window
     }
-    // Print match
     zArr[L] = C;  // Reset values to make new window starting from L, reset counter of matches
     L++; R = L;
   }
@@ -61,20 +61,6 @@ bool zAlgoMultiplePatterns(std::vector<std::string> patterns, std::string text) 
   }
   if (matchFound == 0) std::cout << "(false) No se encontraron coincidencias" << "\n";
   return matchFound > 0;
-}
-
-std::string readFileToString (std::string filename) {
-  std::ifstream file (filename); // this is equivalent to the above
-  std::string line;
-  std::string result;
-  if (file.is_open()) {
-    while ( getline (file, line) ) {
-      result += '$';
-      result += line;
-    }
-    file.close();
-  }
-  return result;
 }
 
 std::vector<std::string> readFileToVector (std::string filename) {
@@ -90,6 +76,23 @@ std::vector<std::string> readFileToVector (std::string filename) {
   return result;
 }
 
+std::tuple<std::string, std::vector<std::string> > readFileToVectorAndString (std::string filename) {
+  std::ifstream file (filename);
+  std::string line;
+  std::string resultingString;
+  std::vector<std::string> resultingVector;
+  if (file.is_open()) {
+    while ( getline (file, line) ) {
+      resultingVector.push_back(line);
+      resultingString += '$'; // To show end of line
+      resultingString += line;
+    }
+    file.close();
+  }
+  std::tuple<std::string, std::vector<std::string> > fileResult = std::make_tuple(resultingString, resultingVector);
+  return fileResult;
+}
+
 void searchPatternInFile (std::string stringTransmission, std::string msg) {
   std::vector<std::string> patternCode1 = readFileToVector("../github/Evidencia1/mcode1.txt");
   std::vector<std::string> patternCode2 = readFileToVector("../github/Evidencia1/mcode2.txt");
@@ -97,94 +100,94 @@ void searchPatternInFile (std::string stringTransmission, std::string msg) {
   std::tuple<int, int> matchesIndex;
   //Part 1 - find if pattern is in transmission files
   std::cout << "\t" << msg << " -> mcode1\n";
-  std::cout << zAlgoMultiplePatterns(patternCode1, stringTransmission) << "\n";
+  zAlgoMultiplePatterns(patternCode1, stringTransmission);
   std::cout << "\t" << msg << " -> mcode2\n";
-  std::cout << zAlgoMultiplePatterns(patternCode2, stringTransmission) << "\n";
+  zAlgoMultiplePatterns(patternCode2, stringTransmission);
   std::cout << "\t" << msg << " -> mcode3\n";
-  std::cout << zAlgoMultiplePatterns(patternCode3, stringTransmission) << "\n";
+  zAlgoMultiplePatterns(patternCode3, stringTransmission);
 }
 
-void printPalindrome(std::string text, int length, int center) {
-  int start = center - (length - 2);
-  std::cout << "\n";
-  for(int i = start; i <= start + (length - 1)*2; i++) {
-    if (text[i] == '#') {
-      std::cout << " ";
-    } else {
-      std::cout << text[i];
+std::string getPalindrome(std::string text, int start, int end) {
+  std::string palindrome;
+  for(int i = start; i <= end; i++) {
+    if (text[i] != '#') {
+      palindrome += text[i];
     }
   }
-  std::cout << "\n";
+  return palindrome;
 }
 
 std::string makeStringOdd (std::string &text) {
   std::string result;
-  result.push_back('#');
   for (char i : text) {
-    result.push_back(i);
-    result.push_back('#');
+    result += '#';
+    result += i;
   }
+  result += '#';
   return result;
 }
 
-void manacher (std::string text) {
-  int sizeArray = text.length();
-  std::string oddText = text;
-  if (text.length() % 2 == 0) {
-    sizeArray = 2 * text.length() + 1;
-    oddText = makeStringOdd(text);
-  }
-  int palindromeLength = 0;
+std::string manacher (std::string text) {
+  std::string oddText = makeStringOdd(text);
+  int R = 0; // stores right of lps
+  int C = 0; // store center of longest palindromic seq
+  int maxLen = 0; // longest palindrome seq length
   int palindromeCenter = 0;
-  int centro = 0;
-  int R = 0;
-  std::vector<int> P (sizeArray);
-
+  std::vector<int> p (oddText.length());
   std::cout << "ODD TEXT => " << oddText << "\n";
 
-  // Un ciclo es centro
-  for (int i = 0; i < oddText.length() - 1; i++) {
-    if (i < R) { // Centro actual esta dentro del rango del palindromo mas grande encontrado anteriormente
-      P[i] = std::min((R - i), (centro*2 - i));
+  for (int i = 0; i < oddText.length(); i++) {
+    int mirror = (2 * C - i);
+
+    if (i > R) {
+      p[i] = std::min(R - i, p[mirror]);
     }
 
-    while (oddText[i - (P[i] - 1)] == oddText[i + (P[i] + 1)]) { // extienden left y right bounds
-      P[i]++;
+    while (oddText[i + (1 + p[i])] == oddText[i - (p[i] + 1)]) {
+      p[i]++;
     }
 
-    if (i + P[i] > R) { // Optimizar para recorrer menos pasos - creo
-      centro = i;
-      R = i + P[i]; // Avanza R a nueva posición encontrada en ciclo anterior
-    }
-
-    if (P[i] > palindromeLength) { // sustituir nueva palidromo mas largo
+    if (p[i] > maxLen) {
+      maxLen = p[i];
       palindromeCenter = i;
-      palindromeLength = P[i];
+    }
+
+    if (i + p[i] > R) { // current palindrome is bigger
+      C = i;
+      R = i + p[i];
     }
   }
-
-  std::cout << "palindrome Length =>" << palindromeLength <<"\n";
-  std::cout << "palindrome Center =>" << palindromeCenter <<"\n";
-  printPalindrome(oddText, palindromeLength, palindromeCenter);
+  int start = (palindromeCenter - maxLen)/2;
+  int end = start + maxLen - 1;
+  std::cout << "palindrome Length =>" << maxLen <<"\n";
+  std::cout << "palindrome Left =>" << start <<"\n";
+  std::cout << "palindrome Right =>" << end <<"\n";
+  return getPalindrome(text, start, end);
 }
 
-void largestPalindrome (std::string text) {
-  manacher(text);
+void largestPalindrome (std::vector<std::string> texts) {
+  std::string bestPalindrome;
+  for (std::string text : texts) {
+    std::string palindromeFound = manacher(text);
+    std::cout << "Palindrome found => " << palindromeFound << "\n";
+    if (palindromeFound.length() > bestPalindrome.length()) bestPalindrome = palindromeFound;
+  }
+  std::cout << "\n\n\nBest palindrome: " << bestPalindrome << "\n";
 }
 
 // DONE: SI LO HACEMOS COMO 1 STRING GIGANTE PONERLE UN CARACTER DE SALTO DE LINEA O SINO BUSCAR PATRON EN CADA LINEA Y NO JUNTAR DESPUES DEL SALTO DE LINEA
+// TODO: VALIDACIONES QUE TEXTO SEA DE 0 A 9 Y DE A a F. -> no se que mas validaciones
+// TODO: REMOVE COMMENTS
 
 int main () {
-  //std::vector<std::string> stringTransmission1 = readFileToVector("../github/Evidencia1/transmision1.txt"); // Todo: see how to add absolut path
-  //std::vector<std::string> stringTransmission2 = readFileToVector("../github/Evidencia1/transmision2.txt"); // Todo: see how to add absolut path
-  std::string stringTransmission1 = readFileToString("../github/Evidencia1/transmision1.txt"); // Todo: see how to add absolut path
-  std::string stringTransmission2 = readFileToString("../github/Evidencia1/transmision2.txt"); // Todo: see how to add absolut path
-  // Parte 1
-  searchPatternInFile(stringTransmission1, "Transmición 1");
-  searchPatternInFile(stringTransmission2, "Transmición 2");
+  std::tuple<std::string, std::vector<std::string> > transmission1 = readFileToVectorAndString("../github/Evidencia1/transmision1.txt"); // Todo: see how to add absolut path
+  std::tuple<std::string, std::vector<std::string> > transmission2 = readFileToVectorAndString("../github/Evidencia1/transmision2.txt"); // Todo: see how to add absolut path
+  // Parte 1 - casi casi falta indice correcto
+  searchPatternInFile(std::get<0>(transmission1), "Transmición 1");
+  searchPatternInFile(std::get<0>(transmission2), "Transmición 2");
   // Parte 2
-  //largestPalindrome(stringTransmission1);
-  //largestPalindrome(stringTransmission2);
+  largestPalindrome(std::get<1>(transmission1));
+  // largestPalindrome(std::get<1>(transmission2));
 
   return 0;
 }

@@ -89,6 +89,43 @@ void manacher (string text) {
   printPalindrome(oddText, palindromeLength, palindromeCenter);
 }
 
+void manacher2 (string text) {
+  string oddText = makeStringOdd(text);
+  int R = 0; // stores right of lps
+  int C = 0; // store center of longest palindromic seq
+  int maxLen = 0; // longest palindrome seq length
+  int palindromeCenter = 0;
+  std::vector<int> p (oddText.length());
+  std::cout << "ODD TEXT => " << oddText << "\n";
+
+  for (int i = 0; i < oddText.length(); i++) {
+    int mirror = (2 * C - i);
+
+    if (i > R) {
+      p[i] = std::min(R - i, p[mirror]);
+    }
+
+    while (oddText[i + (1 + p[i])] == oddText[i - (p[i] + 1)]) {
+      p[i]++;
+    }
+
+    if (p[i] > maxLen) {
+      maxLen = p[i];
+      palindromeCenter = i;
+    }
+
+    if (i + p[i] > R) { // current palindrome is bigger
+      C = i;
+      R = i + p[i];
+    }
+  }
+  int start = (palindromeCenter - maxLen)/2;
+  int end = start + maxLen - 1;
+  cout << "palindrome Length =>" << maxLen <<"\n";
+  cout << "palindrome Left =>" << start <<"\n";
+  cout << "palindrome Right =>" << end <<"\n";
+}
+
 void copiaInternet (string text) {
   int N = text.length();
   if(N == 0)
@@ -155,6 +192,7 @@ void copiaInternet (string text) {
 }
 
 int main () {
-  manacher("jabbajkjhgf");
+  // manacher("jabbajkjhgf");
+  manacher2("jabbajkjhg");
   copiaInternet("jabbajkjhgf");
 }
