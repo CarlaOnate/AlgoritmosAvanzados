@@ -8,22 +8,7 @@
 #include <vector>
 #include <tuple>
 
-// To show functioning of Z algorithm
-void printZarr(std::vector<int> z) {
-  for (auto el : z) {
-    std::cout << " " << el << " ";
-  }
-  std::cout << "\n\n";
-}
-
-void printSth(std::string text) {
-  for (auto el : text) std::cout << el;
-}
-
 bool zAlgoMultiplePatterns(std::vector<std::string> patterns, std::string text) {
-  // Todo: CORREGIR INDICE PARA IMPRIMIRLO
-  int matchFound = 0;
-  int matchIndex = -1;
   int lineIndex = 0;
   int fileLine = 1;
   std::string patternFound;
@@ -33,12 +18,16 @@ bool zAlgoMultiplePatterns(std::vector<std::string> patterns, std::string text) 
   int C = 0; // counts pattern matches
 
   std::vector<int> zArr(text.size());
+  std::vector<std::tuple<std::string, int, int> > patternsFound; // (pattern, lineInFileOfPattern, indexWherePatternWasFound)
   zArr[L] = 0;
 
-  while (L < text.size() && matchFound == 0) { // We only need one match from mcode files
+  while (L < text.size()) {
     // if match - move R window and P to check next of the pattern - count in C the number of matches L index remains the same
-    lineIndex++;
-    if (text[R] == '$') fileLine++; matchIndex = 0;
+    if (text[R] == '$') {
+      fileLine++;
+      lineIndex = 0;
+    }
+
     for (auto & el : patterns) {
       while (text[R] == el[P] && P < el.size()) { // while pattern matches move right window and count matches
         C++; // Add match
@@ -47,22 +36,25 @@ bool zAlgoMultiplePatterns(std::vector<std::string> patterns, std::string text) 
       }
       // No match
       if (C == el.size()) { // Exact match with current pattern
-        matchFound++;
-        matchIndex = lineIndex;
-        patternFound = el;
-        break;
+        std::tuple<std::string, int, int> pattern = std::make_tuple(el, fileLine, lineIndex);
+        patternsFound.push_back(pattern);
       }
       C = 0; P = 0; R = L; // Reset values but dont move left window
     }
     zArr[L] = C;  // Reset values to make new window starting from L, reset counter of matches
     L++; R = L;
+    lineIndex++;
   }
-  if (matchFound > 0) {
-    std::cout << " |  patron => "; printSth(patternFound); std::cout << "\n";
-    std::cout << "\t(true) Se encontro patrón en linea: " << fileLine << ", indice: " << matchIndex << "\n";
+
+  if (!patternsFound.empty()) std::cout << "Los patrones encontrados son (si el patrón no estan en la lista siguiente es porque no se encontró): \n";
+  for (auto pattern : patternsFound) {
+    if (!patternsFound.empty()) {
+      std::cout << "\t| patron => " << std::get<0>(pattern) << " |\n";
+      std::cout << "\t\t(true) Se encontro patrón en linea: " << std::get<1>(pattern) << ", indice: " << std::get<2>(pattern) << "\n";
+    }
   }
-  if (matchFound == 0) std::cout << "\n\t(false) No se encontraron coincidencias" << "\n";
-  return matchFound > 0;
+  if (patternsFound.empty()) std::cout << "\t\t(false) No se encontró ningun patrón" << "\n";
+  return !patternsFound.empty();
 }
 
 std::vector<std::string> readFileToVector (std::string filename) {
@@ -101,11 +93,11 @@ void searchPatternInFile (std::string stringTransmission, std::string msg) {
   std::vector<std::string> patternCode3 = readFileToVector("../github/Evidencia1/mcode3.txt");
   std::tuple<int, int> matchesIndex;
   //Part 1 - find if pattern is in transmission files
-  std::cout << msg << " -> mcode1 ";
+  std::cout << "\n" << msg << " -> mcode1 \n\n";
   zAlgoMultiplePatterns(patternCode1, stringTransmission);
-  std::cout << msg << " -> mcode2 ";
+  std::cout << "\n" << msg << " -> mcode2 \n\n";
   zAlgoMultiplePatterns(patternCode2, stringTransmission);
-  std::cout << msg << " -> mcode3 ";
+  std::cout << "\n" << msg << " -> mcode3 \n\n";
   zAlgoMultiplePatterns(patternCode3, stringTransmission);
 }
 
