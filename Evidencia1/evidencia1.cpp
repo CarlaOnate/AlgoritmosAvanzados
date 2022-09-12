@@ -8,6 +8,19 @@
 #include <vector>
 #include <tuple>
 
+void printPatterns(std::vector<std::vector<std::tuple<std::string, int, int>>> patternsFound, std::vector<std::string> patterns) {
+  for (int i = 0; i < patternsFound.size(); i++) {
+    if (patternsFound[i].empty()) {
+      std::cout << "\t| patron => " << patterns[i] << " |\n";
+      std::cout << "\t\t(false) No se encontró patrón " << "\n";
+    }
+    for (auto pattern : patternsFound[i]) {
+      std::cout << "\t| patron => " << std::get<0>(pattern) << " |\n";
+      std::cout << "\t\t(true) Se encontro patrón en linea: " << std::get<1>(pattern) << ", indice: " << std::get<2>(pattern) << "\n";
+    }
+  }
+}
+
 bool zAlgoMultiplePatterns(std::vector<std::string> patterns, std::string text) {
   int lineIndex = 0;
   int fileLine = 1;
@@ -18,7 +31,7 @@ bool zAlgoMultiplePatterns(std::vector<std::string> patterns, std::string text) 
   int C = 0; // counts pattern matches
 
   std::vector<int> zArr(text.size());
-  std::vector<std::tuple<std::string, int, int> > patternsFound; // (pattern, lineInFileOfPattern, indexWherePatternWasFound)
+  std::vector<std::vector<std::tuple<std::string, int, int>>> patternsFound(patterns.size()); // (pattern, lineInFileOfPattern, indexWherePatternWasFound)
   zArr[L] = 0;
 
   while (L < text.size()) {
@@ -28,16 +41,16 @@ bool zAlgoMultiplePatterns(std::vector<std::string> patterns, std::string text) 
       lineIndex = 0;
     }
 
-    for (auto & el : patterns) {
-      while (text[R] == el[P] && P < el.size()) { // while pattern matches move right window and count matches
+    for (int i = 0; i < patterns.size(); i++) {
+      while (text[R] == patterns[i][P] && P < patterns[i].size()) { // while pattern matches move right window and count matches
         C++; // Add match
         R++; // Move window
         P++; // Move pattern
       }
       // No match
-      if (C == el.size()) { // Exact match with current pattern
-        std::tuple<std::string, int, int> pattern = std::make_tuple(el, fileLine, lineIndex);
-        patternsFound.push_back(pattern);
+      if (C == patterns[i].size()) { // Exact match with current pattern
+        std::tuple<std::string, int, int> pattern = std::make_tuple(patterns[i], fileLine, lineIndex);
+        patternsFound[i].push_back(pattern);
       }
       C = 0; P = 0; R = L; // Reset values but dont move left window
     }
@@ -46,14 +59,7 @@ bool zAlgoMultiplePatterns(std::vector<std::string> patterns, std::string text) 
     lineIndex++;
   }
 
-  if (!patternsFound.empty()) std::cout << "Los patrones encontrados son (si el patrón no estan en la lista siguiente es porque no se encontró): \n";
-  for (auto pattern : patternsFound) {
-    if (!patternsFound.empty()) {
-      std::cout << "\t| patron => " << std::get<0>(pattern) << " |\n";
-      std::cout << "\t\t(true) Se encontro patrón en linea: " << std::get<1>(pattern) << ", indice: " << std::get<2>(pattern) << "\n";
-    }
-  }
-  if (patternsFound.empty()) std::cout << "\t\t(false) No se encontró ningun patrón" << "\n";
+  printPatterns(patternsFound, patterns);
   return !patternsFound.empty();
 }
 
