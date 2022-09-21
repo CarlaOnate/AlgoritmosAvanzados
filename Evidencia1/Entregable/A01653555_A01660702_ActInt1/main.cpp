@@ -28,7 +28,7 @@ string coincidence = " ";
 void printPatterns(
     vector<vector<tuple<string, int, int>>> patternsFound,
     vector<string> patterns) { // O(n*p) -> n de tamaño de patrones a encontrar,
-  // p de patrones encontrados
+                               // p de patrones encontrados
   for (int i = 0; i < patternsFound.size(); i++) {
     if (patternsFound[i].empty()) {
       cout << "\t| patron => " << patterns[i] << " |\n";
@@ -50,7 +50,7 @@ void printPatterns(
 // linea
 bool zAlgoMultiplePatterns(vector<string> patterns,
                            string text) { // O(n*p) -> n del tamaño del string,
-  // p del numero de patrones a comparar
+                                          // p del numero de patrones a comparar
   int lineIndex = 0;
   int fileLine = 1;
   string patternFound;
@@ -241,7 +241,7 @@ manacher(string text) { // O(n) -> del string que reciba como parametro
 // encontrado. No regresa nada ya que se imprime dentro de la función.
 void largestPalindrome(vector<string> texts,
                        string msg) { // O(n*m) -> numero de lineas del archivo *
-  // tamaño de string a revisar
+                                     // tamaño de string a revisar
   tuple<string, int, int> bestPalindrome;
   int lineInFile = 0;
   int palindromeFile = 0;
@@ -273,13 +273,13 @@ void largestPalindrome(vector<string> texts,
 void findCommon(string line, string line1, int lineNumber2, int lineNumber1) {
 
   int n = line.length();  // Se declara la variable n del tamaño de la primera
-  // linea recibida.
+                          // linea recibida.
   int m = line1.length(); // Se declara la variable m del tamaño de la segunda
-  // linea recibida.
+                          // linea recibida.
 
   int matrix[n + 1][m + 1]; // Se declara una matriz de tamaño (n + 1) * (m + 1)
-  // Esta matriz contendra posteriormente las
-  // coincidencias entre los strings a comparar.
+                            // Esta matriz contendra posteriormente las
+                            // coincidencias entre los strings a comparar.
 
   for (int i = 0; i <= n;
        i++) { // Se igualan a 0 todas las pocisiones dentro de la matriz.
@@ -290,24 +290,24 @@ void findCommon(string line, string line1, int lineNumber2, int lineNumber1) {
 
   int mayor =
       mayorCoincidence[0][0]; // Se declara la variable mayor, la cual lleva el
-  // registro de la coincidencia mas larga. Se
-  // asigna el valor 0 a la variable mayor.
+                              // registro de la coincidencia mas larga. Se
+                              // asigna el valor 0 a la variable mayor.
 
   for (int i = 1; i <= n;
        i++) { // Dos ciclos for anidados se encargan de hacer la comparacion
-    // caracter por caracter del primer string, con los caracteres del
-    // segundo.
+              // caracter por caracter del primer string, con los caracteres del
+              // segundo.
     for (int j = 1; j <= m; j++) {
       if (line[i - 1] ==
           line1[j - 1]) { // Si los caracteres comparados son iguales.
         matrix[i][j] =
             matrix[i - 1][j - 1] + 1; // registra en la casilla actual el valor
-        // de la casilla en diagonal anterior + 1.
+                                      // de la casilla en diagonal anterior + 1.
 
         if (matrix[i][j] > mayor) { // Si el valor de la casilla actual es mayor
-          // al valor mas grande guardado.
+                                    // al valor mas grande guardado.
           mayor = matrix[i][j]; // Registra el valor de la casilla actual como
-          // el neuvo valor mayor.
+                                // el neuvo valor mayor.
 
           // Para el primer string:
           mayorCoincidence[0][0] = mayor; // Registra el mayor valor.
@@ -352,7 +352,7 @@ void findLongestCS(vector<string> file1, vector<string> file2) {
   }
 
   if (mayorCoincidence[0][0] > 1) { // Si existen coincidencias mayores a 1
-    // caracter, se imprimen los resultados
+                                    // caracter, se imprimen los resultados
     cout << "La coincidencia más larga es: " << coincidence << "\n";
     cout << "Fue encontrada en: \n";
     cout << "transmision1.txt: -> Linea: " << mayorCoincidence[0][1] + 1;
@@ -376,9 +376,9 @@ int main() {
 
   if (validateFiles() == true && validateFileLines() == true) {
     std::tuple<std::string, std::vector<std::string>> transmission1 =
-        readFileToVectorAndString("transmision1.txt");
+        readFileToVectorAndString("transmission1.txt");
     std::tuple<std::string, std::vector<std::string>> transmission2 =
-        readFileToVectorAndString("transmision2.txt");
+        readFileToVectorAndString("transmission2.txt");
     std::cout << "\nParte 1\n";
     // Parte 1 - casi casi falta indice correcto
     searchPatternInFile(std::get<0>(transmission1), "Transmición 1");

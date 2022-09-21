@@ -1,0 +1,4 @@
+Carla Oñate Gardella A01653555
+    - Trabaje en la parte 1 y dos de la evidencia. Lo cual fue el algoritmo Z y el manacher algorithm. Genero funcion general para leer archivos.
+Octavio Augusto Alemán Esparza A01660702
+    - Trabaje en la parte 3 de la evidencia e hice las validacion de los archivos. Mas especificamente el archivo utiil.h y el algoritmo de longest common substring.
