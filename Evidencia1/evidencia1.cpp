@@ -376,9 +376,9 @@ int main() {
 
   if (validateFiles() == true && validateFileLines() == true) {
     std::tuple<std::string, std::vector<std::string>> transmission1 =
-        readFileToVectorAndString("transmision1.txt");
+        readFileToVectorAndString("transmission1.txt");
     std::tuple<std::string, std::vector<std::string>> transmission2 =
-        readFileToVectorAndString("transmision2.txt");
+        readFileToVectorAndString("transmission2.txt");
     std::cout << "\nParte 1\n";
     // Parte 1 - casi casi falta indice correcto
     searchPatternInFile(std::get<0>(transmission1), "Transmición 1");

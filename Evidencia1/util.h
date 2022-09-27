@@ -17,8 +17,8 @@ using namespace std;
 ifstream mcode1("mcode1.txt");
 ifstream mcode2("mcode2.txt");
 ifstream mcode3("mcode3.txt");
-ifstream transmision1("transmision1.txt");
-ifstream transmision2("transmision2.txt");
+ifstream transmision1("transmission1.txt");
+ifstream transmision2("transmission2.txt");
 
 bool validateFiles() {
 
