@@ -6,12 +6,12 @@
 using namespace std;
 
 int main () {
-  Graph graph;
-  graph.createGraph("abc");
-  graph.createGraph("abcdef");
-  graph.createGraph("abb");
-  graph.createGraph("mochon");
-  graph.createGraph("mochito");
-  graph.createGraph("moshon");
-  graph.printGraph();
+  TRIE graph;
+  graph.addText("abc");
+  graph.addText("huevos");
+  graph.addText("hueva");
+  graph.addText("abbc");
+  graph.addText("acda");
+  graph.searchTrie("abbcdadsg");
 }
+

@@ -9,18 +9,18 @@
 #include <set>
 #include <string>
 #include <iostream>
+#include "node.h"
 
 using namespace std;
 
-class Graph {
-  private:
-    char firstNode;
-    map<string, set<string> > graph;
+class TRIE {
+  public:
+    Node* root;
 
   public:
-    void addEdge(string, string);
-    void createGraph(string);
-    void printGraph();
+    TRIE();
+    void addText(string);
+    void searchTrie(string);
 };
 
 #endif //ALGORITMOS_AVANZADOS_GRAPH_H
