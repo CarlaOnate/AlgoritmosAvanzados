@@ -21,6 +21,7 @@ class TRIE {
     TRIE();
     void addText(string);
     void searchTrie(string);
+    void printGraph(Node*);
 };
 
 #endif //ALGORITMOS_AVANZADOS_GRAPH_H

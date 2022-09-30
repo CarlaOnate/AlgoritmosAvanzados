@@ -4,13 +4,13 @@
 
 #include "graph.h"
 
+
 TRIE::TRIE() {
   // Inicializar el root a un nodo vacio
   this->root = new Node();
 }
 
 void TRIE::addText(string text) {
-  Node* startingNode = this->root;
   Node* currentNode = this->root;
   for (int i  = 0; i < text.length(); i++) {
     while (currentNode->nextNodes[text[i]]) { // Mientras haya camino siguelo
@@ -22,6 +22,7 @@ void TRIE::addText(string text) {
     currentNode->nextNodes[text[i]] = newNode;
     currentNode = newNode;
   }
+  currentNode->nextNodes['$'] = nullptr;
 }
 
 void TRIE::searchTrie(string text) {
@@ -37,4 +38,15 @@ void TRIE::searchTrie(string text) {
   }
   cout << " || \n";
   cout << "Caracteres encontrados: " << resultingSearch << "\n";
+}
+
+void TRIE::printGraph(Node* root) {
+    for (std::pair<const char, Node*> el : root->nextNodes){
+      cout << el.first << " ";
+      if (el.second != nullptr){
+        printGraph(el.second);
+        //std::cout << std::endl;
+        //std::cout << "Tienen hijos" << std::endl;
+      }
+    }
 }

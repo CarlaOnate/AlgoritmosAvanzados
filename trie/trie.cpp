@@ -7,11 +7,13 @@ using namespace std;
 
 int main () {
   TRIE graph;
-  graph.addText("abc");
-  graph.addText("huevos");
+  graph.addText("holas");
+  graph.addText("hola");
   graph.addText("hueva");
   graph.addText("abbc");
   graph.addText("acda");
-  graph.searchTrie("abbcdadsg");
+  graph.searchTrie("hola");
+  //graph.searchTrie("humo");
+  graph.printGraph(graph.root);
 }
 
