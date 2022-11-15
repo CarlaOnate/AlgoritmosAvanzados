@@ -128,13 +128,6 @@ int main () {
   vector<vector<int> > board (stoi(sizeBoard), vector<int> (stoi(sizeBoard)));
   vector<pair<int, int> > steps;
 
-/*   for (int i = 0; i < board.size(); i++) {
-    for (int k = 0; k < board.size(); k++) {
-      cout << board[i][k] << " ";
-    }
-    cout << "\n";
-  }
- */
   bool result = knigthsProblem (board, {0, 0}, steps);
 
   if (result) {
